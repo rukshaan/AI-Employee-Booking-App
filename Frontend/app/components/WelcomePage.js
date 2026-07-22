@@ -1,12 +1,12 @@
-//import liraries
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import UserTypeButton from './UserTypeButton';
 import { StackActions } from '@react-navigation/native';
+import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
+import { theme } from '../theme';
 
 const { width } = Dimensions.get('window')
 
-// create a component
 const WelcomePage = ({ navigation }) => {
     const employee = async () => {
         navigation.dispatch(
@@ -24,47 +24,47 @@ const WelcomePage = ({ navigation }) => {
         );
     };
 
-
     return (
         <View style={styles.container}>
-            <View style={styles.backgroundAccent1} />
-            <View style={styles.backgroundAccent2} />
-            <View style={styles.logoContainer}>
+            <Animated.View entering={FadeIn.duration(1500)} style={styles.backgroundAccent1} />
+            <Animated.View entering={FadeIn.duration(1500).delay(300)} style={styles.backgroundAccent2} />
+            
+            <Animated.View entering={FadeInDown.duration(800).springify()} style={styles.logoContainer}>
                 <Image
                     source={require('../../assets/logo.png')}
                     style={styles.logo}
                 />
                 <Text style={styles.title}>Service Marketplace</Text>
                 <Text style={styles.subtitle}>Select your role to get started</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-            <UserTypeButton
-                lable='Admin'
-                onPress={admin}
-                color="#f43f5e" // Rose
-            />
-            <UserTypeButton
-                lable='Worker'
-                onPress={employee}
-                color="#8b5cf6" // Violet
-            />
-            <UserTypeButton
-                lable='Customer'
-                onPress={employeer}
-                color="#10b981" // Emerald
-            />
-            </View>
+            </Animated.View>
+
+            <Animated.View entering={FadeInDown.duration(800).delay(200).springify()} style={styles.buttonContainer}>
+                <UserTypeButton
+                    lable='Customer'
+                    onPress={employeer}
+                    color={theme.colors.secondary} 
+                />
+                <UserTypeButton
+                    lable='Worker'
+                    onPress={employee}
+                    color={theme.colors.violet} 
+                />
+                <UserTypeButton
+                    lable='Admin'
+                    onPress={admin}
+                    color={theme.colors.tertiary} 
+                />
+            </Animated.View>
         </View>
     );
 };
 
-// define your styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffffff', // Clean white background
+        backgroundColor: theme.colors.background,
     },
     backgroundAccent1: {
         position: 'absolute',
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
         left: -100,
         width: 300,
         height: 300,
-        backgroundColor: 'rgba(139, 92, 246, 0.1)', // Subtle violet glow
-        borderRadius: 150,
+        backgroundColor: 'rgba(139, 92, 246, 0.08)',
+        borderRadius: theme.borderRadius.round,
     },
     backgroundAccent2: {
         position: 'absolute',
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
         right: -100,
         width: 400,
         height: 400,
-        backgroundColor: 'rgba(16, 185, 129, 0.1)', // Subtle emerald glow
-        borderRadius: 200,
+        backgroundColor: 'rgba(16, 185, 129, 0.08)',
+        borderRadius: theme.borderRadius.round,
     },
     logoContainer: {
         alignItems: 'center',
@@ -93,26 +93,27 @@ const styles = StyleSheet.create({
         width: width * 0.4,
         height: width * 0.4,
         resizeMode: 'contain',
-        marginBottom: 20,
+        marginBottom: theme.spacing.m,
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1e293b', // Dark slate for premium feel
-        marginBottom: 8,
-        letterSpacing: 0.5,
+        fontSize: 32,
+        fontWeight: '800',
+        color: theme.colors.textDark,
+        marginBottom: theme.spacing.s,
+        letterSpacing: -0.5,
     },
     subtitle: {
         fontSize: 16,
-        color: '#64748b', // Lighter slate
+        fontWeight: '500',
+        color: theme.colors.textLight,
     },
     buttonContainer: {
         width: '100%',
         alignItems: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: theme.spacing.l,
         zIndex: 10,
+        gap: theme.spacing.m,
     }
 });
 
-//make this component available to the app
 export default WelcomePage;

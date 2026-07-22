@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { theme } from '../theme';
 
 const FormInput = (props) => {
     const { placeholder, lable, error } = props;
@@ -12,7 +13,7 @@ const FormInput = (props) => {
             <TextInput
                 {...props}
                 placeholder={placeholder}
-                placeholderTextColor="#8a8fb3"
+                placeholderTextColor={theme.colors.textLight}
                 style={[styles.input, error ? styles.inputError : null]}
             />
         </View>
@@ -21,42 +22,40 @@ const FormInput = (props) => {
 
 const styles = StyleSheet.create({
     wrapper: {
-        marginBottom: 14,
+        marginBottom: theme.spacing.m,
     },
     labelRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 6,
+        marginBottom: theme.spacing.xs,
     },
     label: {
         fontWeight: '700',
-        color: '#2b2f4b',
-        fontSize: 13,
+        color: theme.colors.textDark,
+        fontSize: 14,
+        letterSpacing: 0.2,
     },
     errorText: {
-        color: '#ef4444',
+        color: theme.colors.error,
         fontSize: 12,
         flexShrink: 1,
         textAlign: 'right',
     },
     input: {
         borderWidth: 1,
-        borderColor: '#e2e8f0',
-        height: 52,
-        borderRadius: 16,
+        borderColor: theme.colors.border,
+        height: 56, // Slightly taller for premium feel
+        borderRadius: theme.borderRadius.l,
         fontSize: 16,
-        paddingHorizontal: 16,
-        backgroundColor: '#f8fafc',
-        color: '#1e293b',
-        shadowColor: '#64748b',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 1,
+        paddingHorizontal: theme.spacing.m,
+        backgroundColor: theme.colors.surface,
+        color: theme.colors.textDark,
+        ...theme.shadows.soft,
     },
     inputError: {
-        borderColor: '#ef4444',
+        borderColor: theme.colors.error,
+        borderWidth: 1.5,
     },
 });
 

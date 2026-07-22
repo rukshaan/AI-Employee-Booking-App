@@ -56,6 +56,11 @@ io.on("connection", (socket) => {
     console.log(`User joined room_${bookingId}`);
   });
 
+  socket.on("join_user_room", (userId) => {
+    socket.join(`user_${userId}`);
+    console.log(`User joined user_${userId}`);
+  });
+
   socket.on("send_message", async (data) => {
     // data should contain { senderId, senderType, receiverId, text, bookingId }
     try {

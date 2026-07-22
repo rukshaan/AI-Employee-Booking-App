@@ -6,6 +6,9 @@ const sentimentAnalyzer = new Sentiment();
 exports.create = async (req, res) => {
   try {
     const booking = await Booking.create(req.body);
+    if (req.io && req.body.employeeId) {
+      req.io.to(`user_${req.body.employeeId}`).emit('new_booking_request', booking);
+    }
     res.json({ success: true, booking });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -54,6 +57,10 @@ exports.updateStatus = async (req, res) => {
 
     booking.status = req.body.status;
     await booking.save();
+
+    if (req.io && booking.employerId) {
+      req.io.to(`user_${booking.employerId}`).emit('booking_status_updated', booking);
+    }
 
     res.json({ success: true, booking });
   } catch (err) {
