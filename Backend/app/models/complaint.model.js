@@ -3,6 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     userType: { type: DataTypes.STRING, allowNull: false },
     userEmail: { type: DataTypes.STRING, allowNull: false },
     message: { type: DataTypes.TEXT, allowNull: false },
-    status: { type: DataTypes.STRING, defaultValue: "Pending" }
+    status: { type: DataTypes.STRING, defaultValue: "Pending" },
+    employeeId: { type: DataTypes.INTEGER, allowNull: true },
+    bookingId: { type: DataTypes.INTEGER, allowNull: true }
   });
 };

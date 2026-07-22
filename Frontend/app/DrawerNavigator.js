@@ -1,9 +1,12 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useLogin } from './context/LoginProvider';
-import Employment from './components/employee/Employment';
+import Client from './api/Client';
+import WorkerDashboard from './components/dashboards/WorkerDashboard';
 import EmployeeProfileEdit from './components/employee/EmployeeProfileEdit';
 import MyBookings from './components/employee/MyBookings';
+import WorkerSettings from './components/employee/WorkerSettings';
+import ChatRoom from './components/ChatRoom';
 
 const Drawer = createDrawerNavigator();
 
@@ -38,7 +41,16 @@ const CustomDrawer = (props) => {
           backgroundColor: '#f6f6f6',
           padding: 20,
         }}
-        onPress={() => setIsLoggedIn(false)}
+        onPress={async () => {
+          if (profile?.id) {
+            try {
+              await Client.put(`/employees/${profile.id}/status`, { status: 'Offline' });
+            } catch (err) {
+              console.log('Error setting offline status', err);
+            }
+          }
+          setIsLoggedIn(false);
+        }}
       >
         <Text>Log Out</Text>
       </TouchableOpacity>
@@ -47,11 +59,24 @@ const CustomDrawer = (props) => {
 };
 
 const DrawerNavigator = () => {
+  const { isDarkMode, toggleTheme } = useLogin();
+
   return (
-    <Drawer.Navigator drawerContent={(props) => <CustomDrawer {...props} />} >
-      <Drawer.Screen component={Employment} name='Employment' />
-      <Drawer.Screen component={MyBookings} name='My Bookings' />
+    <Drawer.Navigator 
+      drawerContent={(props) => <CustomDrawer {...props} />}
+      screenOptions={{
+        headerRight: () => (
+          <TouchableOpacity onPress={toggleTheme} style={{ marginRight: 15 }}>
+            <Text style={{ fontSize: 20 }}>{isDarkMode ? '☀️' : '🌙'}</Text>
+          </TouchableOpacity>
+        ),
+      }}
+    >
+      <Drawer.Screen component={WorkerDashboard} name='Dashboard' />
+      <Drawer.Screen component={MyBookings} name='Booking Requests' />
       <Drawer.Screen component={EmployeeProfileEdit} name='Edit Profile' />
+      <Drawer.Screen component={WorkerSettings} name='Settings' />
+      <Drawer.Screen component={ChatRoom} name='ChatRoom' options={{ drawerItemStyle: { display: 'none' } }} />
     </Drawer.Navigator>
   );
 };

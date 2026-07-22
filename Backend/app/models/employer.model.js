@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       password: { type: DataTypes.STRING, allowNull: false },
       contactNo: { type: DataTypes.STRING, allowNull: false },
       address: { type: DataTypes.STRING, allowNull: false },
+      nic: { type: DataTypes.STRING, unique: true, allowNull: true },
       age: { type: DataTypes.INTEGER, allowNull: true },
       profileImage: { type: DataTypes.TEXT, allowNull: true },
     },

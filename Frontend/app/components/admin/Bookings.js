@@ -25,15 +25,18 @@ const Bookings = () => {
       <FlatList
         data={bookings}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ paddingBottom: 40 }}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.name}>{item.title}</Text>
             <Text>Description: {item.description}</Text>
-            <Text>Price: {item.price}</Text>
+            <Text>Date: {new Date(item.bookingDate).toDateString()}</Text>
+            {item.bookingTime || item.endTime ? <Text>Time: {item.bookingTime || 'N/A'} - {item.endTime || 'N/A'}</Text> : null}
+            <Text>Price: LKR {Number(item.price).toFixed(2)}</Text>
             <Text>Status: {item.status}</Text>
             <Text>Employee: {item.employee?.name || "N/A"}</Text>
             <Text>Employer: {item.employer?.name || "N/A"}</Text>
-            <Text>Work Type: {item.worktype?.name || "N/A"}</Text>
+            <Text>Work Type: {item.workType?.name || item.worktype?.name || "N/A"}</Text>
           </View>
         )}
       />

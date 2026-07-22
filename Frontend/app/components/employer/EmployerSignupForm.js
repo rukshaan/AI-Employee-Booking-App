@@ -5,6 +5,9 @@ import FormSubmitButton from "../FormSubmitButton";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import Client from "../../api/Client";
+import { StyleSheet, TouchableOpacity, Image, Text, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -41,6 +44,44 @@ const EmployerSignupForm = ({ onSuccess }) => {
     contactNo: "",
     address: "",
     age: "",
+    profileImage: "",
+  };
+
+  const pickImage = async (setFieldValue) => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaType.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      setFieldValue('profileImage', `data:image/jpeg;base64,${result.assets[0].base64}`);
+    }
+  };
+
+  const getLocation = async (setFieldValue) => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permission to access location was denied');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      let reverseGeocode = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      });
+      if (reverseGeocode.length > 0) {
+        let addr = reverseGeocode[0];
+        let addressString = `${addr.name ? addr.name + ', ' : ''}${addr.street ? addr.street + ', ' : ''}${addr.city ? addr.city + ', ' : ''}${addr.country || ''}`.replace(/,\s*$/, "");
+        setFieldValue('address', addressString);
+      }
+    } catch (error) {
+      console.log('Error fetching location:', error);
+      alert('Could not fetch location. Please try again.');
+    }
   };
 
   const signUp = async (values, formikAction) => {
@@ -76,8 +117,18 @@ const EmployerSignupForm = ({ onSuccess }) => {
           handleChange,
           handleBlur,
           handleSubmit,
+          setFieldValue,
         }) => (
           <>
+            <View style={styles.imagePickerContainer}>
+              <TouchableOpacity onPress={() => pickImage(setFieldValue)} style={styles.imagePicker}>
+                {values.profileImage ? (
+                  <Image source={{ uri: values.profileImage }} style={styles.profileImage} />
+                ) : (
+                  <Text style={styles.imagePickerText}>Add Profile Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
             <FormInput
               value={values.name}
               error={touched.name && errors.name}
@@ -132,6 +183,9 @@ const EmployerSignupForm = ({ onSuccess }) => {
               onChangeText={handleChange("address")}
               onBlur={handleBlur("address")}
             />
+            <TouchableOpacity onPress={() => getLocation(setFieldValue)} style={styles.locationButton}>
+              <Text style={styles.locationButtonText}>📍 Get My Current Location</Text>
+            </TouchableOpacity>
             <FormInput
               value={values.age}
               error={touched.age && errors.age}
@@ -152,5 +206,46 @@ const EmployerSignupForm = ({ onSuccess }) => {
     </FormContainer>
   );
 };
+
+
+const styles = StyleSheet.create({
+  imagePickerContainer: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  imagePicker: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#e1e1e1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: '#ccc',
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
+  },
+  imagePickerText: {
+    color: '#888',
+    textAlign: 'center',
+    fontSize: 12,
+  },
+  locationButton: {
+    backgroundColor: '#e6f7ff',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#91d5ff',
+  },
+  locationButtonText: {
+    color: '#0050b3',
+    fontWeight: 'bold',
+  },
+});
 
 export default EmployerSignupForm;

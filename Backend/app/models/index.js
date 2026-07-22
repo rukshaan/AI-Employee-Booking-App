@@ -23,5 +23,17 @@ db.Employer = require("./employer.model.js")(sequelize, Sequelize);
 db.WorkType = require("./worktype.model.js")(sequelize, Sequelize);
 db.Booking = require("./booking.model.js")(sequelize, Sequelize);
 db.Complaint = require("./complaint.model.js")(sequelize, Sequelize);
+db.Item = require("./item.model.js")(sequelize, Sequelize);
+db.Message = require("./message.model.js")(sequelize, Sequelize);
+
+// Associations
+db.Booking.belongsTo(db.Employee, { foreignKey: 'employeeId' });
+db.Booking.belongsTo(db.Employer, { foreignKey: 'employerId' });
+db.Booking.belongsTo(db.WorkType, { foreignKey: 'workTypeId' });
+
+db.Complaint.belongsTo(db.Employee, { foreignKey: 'employeeId' });
+db.Complaint.belongsTo(db.Booking, { foreignKey: 'bookingId' });
+
+db.Item.belongsTo(db.WorkType, { foreignKey: 'workTypeId' });
 
 module.exports = db;

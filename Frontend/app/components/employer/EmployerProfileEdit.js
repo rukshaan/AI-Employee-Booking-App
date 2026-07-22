@@ -6,6 +6,7 @@ import FormSubmitButton from "../FormSubmitButton";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from 'expo-location';
 import Client from "../../api/Client";
 import { useLogin } from "../../context/LoginProvider";
 
@@ -32,6 +33,29 @@ const EmployerProfileEdit = ({ navigation }) => {
     if (!result.canceled) {
       const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
       setImage(base64Image);
+    }
+  };
+
+  const getLocation = async (setFieldValue) => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Error', 'Permission to access location was denied');
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      let reverseGeocode = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      });
+      if (reverseGeocode.length > 0) {
+        let addr = reverseGeocode[0];
+        let addressString = `${addr.name ? addr.name + ', ' : ''}${addr.street ? addr.street + ', ' : ''}${addr.city ? addr.city + ', ' : ''}${addr.country || ''}`.replace(/,\s*$/, "");
+        setFieldValue('address', addressString);
+      }
+    } catch (error) {
+      console.log('Error fetching location:', error);
+      Alert.alert('Error', 'Could not fetch location. Please try again.');
     }
   };
 
@@ -83,7 +107,7 @@ const EmployerProfileEdit = ({ navigation }) => {
           enableReinitialize
           onSubmit={handleUpdate}
         >
-          {({ values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit }) => (
+          {({ values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit, setFieldValue }) => (
             <>
               <FormInput
                 value={values.name}
@@ -110,6 +134,9 @@ const EmployerProfileEdit = ({ navigation }) => {
                 onChangeText={handleChange("address")}
                 onBlur={handleBlur("address")}
               />
+              <TouchableOpacity onPress={() => getLocation(setFieldValue)} style={styles.locationButton}>
+                <Text style={styles.locationButtonText}>📍 Get My Current Location</Text>
+              </TouchableOpacity>
               <FormInput
                 value={values.age}
                 error={touched.age && errors.age}
@@ -164,6 +191,19 @@ const styles = StyleSheet.create({
   imageButtonText: {
     color: "#fff",
     fontSize: 14,
+  },
+  locationButton: {
+    backgroundColor: '#e6f7ff',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#91d5ff',
+  },
+  locationButtonText: {
+    color: '#0050b3',
+    fontWeight: 'bold',
   },
 });
 

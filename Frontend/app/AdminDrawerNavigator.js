@@ -53,9 +53,18 @@ const CustomDrawer = (props) => {
   );
 }
 const DrawerNavigator = () => {
+  const { isDarkMode, toggleTheme } = useLogin();
   return (
-    <Drawer.Navigator drawerContent={(props) => <CustomDrawer {...props} />} >
-
+    <Drawer.Navigator 
+      drawerContent={(props) => <CustomDrawer {...props} />} 
+      screenOptions={{
+        headerRight: () => (
+          <TouchableOpacity onPress={toggleTheme} style={{ marginRight: 15 }}>
+            <Text style={{ fontSize: 20 }}>{isDarkMode ? '☀️' : '🌙'}</Text>
+          </TouchableOpacity>
+        ),
+      }}
+    >
       <Drawer.Screen component={Employees} name='Employees' />
       <Drawer.Screen component={ViewWorkType} name='ViewWorkType' />
       <Drawer.Screen component={AddWorkType} name='AddWorkType' />

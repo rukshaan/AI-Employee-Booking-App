@@ -2,12 +2,14 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 
 import { useLogin } from './context/LoginProvider';
+import CustomerDashboard from './components/dashboards/CustomerDashboard';
 import EmployerProfileEdit from './components/employer/EmployerProfileEdit';
 import EmployeeComplain from './components/employer/EmployeeComplain';
 import Employment from './components/employer/Employment';
 import Discount from './components/employer/Discount';
-import Booking from './components/employer/Booking';
 import MyBookings from './components/employer/MyBookings';
+import CustomerSettings from './components/employer/CustomerSettings';
+import ChatRoom from './components/ChatRoom';
 
 const Drawer = createDrawerNavigator();   
 
@@ -50,14 +52,27 @@ const CustomDrawer = (props) => {
   );
 }
 const EmployerDrawerNavigator = () => {
+  const { isDarkMode, toggleTheme } = useLogin();
+
   return (
-    <Drawer.Navigator drawerContent={(props) => <CustomDrawer {...props} />} >
+    <Drawer.Navigator 
+      drawerContent={(props) => <CustomDrawer {...props} />}
+      screenOptions={{
+        headerRight: () => (
+          <TouchableOpacity onPress={toggleTheme} style={{ marginRight: 15 }}>
+            <Text style={{ fontSize: 20 }}>{isDarkMode ? '☀️' : '🌙'}</Text>
+          </TouchableOpacity>
+        ),
+      }}
+    >
+      <Drawer.Screen component={CustomerDashboard} name='Dashboard' />
       <Drawer.Screen component={Employment} name='Create Booking' />
-      <Drawer.Screen component={Booking} name='Booking Requests' />
       <Drawer.Screen component={MyBookings} name='My Bookings' />
       <Drawer.Screen component={EmployerProfileEdit} name='Edit Profile' />
+      <Drawer.Screen component={CustomerSettings} name='Settings' />
       <Drawer.Screen component={Discount} name='Discount' />
       <Drawer.Screen component={EmployeeComplain} name='Complain' />
+      <Drawer.Screen component={ChatRoom} name='ChatRoom' options={{ drawerItemStyle: { display: 'none' } }} />
     </Drawer.Navigator>
   );
 };

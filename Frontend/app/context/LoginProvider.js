@@ -8,9 +8,19 @@ const LoginProvider = ({ children }) => {
 
     const [adminLoggedIn, setAdminLoggedIn] = useState(false);
     const [employerLoggedIn, setEmployerLoggedIn] = useState(false);
+    
+    // Theme State
+    const [isDarkMode, setIsDarkMode] = useState(false);
+    const toggleTheme = () => setIsDarkMode(prev => !prev);
 
     return (
-        <LoginContext.Provider value={{ isLoggedIn, setIsLoggedIn, profile, setProfile, adminLoggedIn, setAdminLoggedIn, employerLoggedIn, setEmployerLoggedIn }}>
+        <LoginContext.Provider value={{ 
+            isLoggedIn, setIsLoggedIn, 
+            profile, setProfile, 
+            adminLoggedIn, setAdminLoggedIn, 
+            employerLoggedIn, setEmployerLoggedIn,
+            isDarkMode, toggleTheme
+        }}>
             {children}
         </LoginContext.Provider>
     );

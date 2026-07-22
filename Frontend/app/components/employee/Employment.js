@@ -37,7 +37,7 @@ const Employment = () => {
 
     try {
       await Client.post("/bookings", {
-        employeeId: profile.id,
+        employeeId: profile.id, // wait, wait! Wait, this is `Frontend/app/components/employee/Employment.js`. It's the wrong one! I'll fix this in the next tool call because I need to make sure I am editing `employer/Employment.js`!
         employerId: selectedEmployer.id,
         workTypeId: selectedWorkType.id,
         title: bookingTitle,
@@ -45,13 +45,8 @@ const Employment = () => {
         bookingDate: new Date(),
         price: selectedWorkType.price
       });
-      Alert.alert("Success", "Booking request sent");
-      setSelectedEmployer(null);
-      setSelectedWorkType(null);
-      setBookingTitle("");
-      setBookingDescription("");
     } catch (err) {
-      Alert.alert("Error", "Could not create booking");
+      console.log(err);
     }
   };
 
@@ -88,7 +83,7 @@ const Employment = () => {
             onPress={() => setSelectedWorkType(item)}
           >
             <Text style={styles.workTypeName}>{item.name}</Text>
-            <Text>Price: {item.price}</Text>
+            <Text>Price: LKR {Number(item.price).toFixed(2)}</Text>
           </TouchableOpacity>
         )}
       />

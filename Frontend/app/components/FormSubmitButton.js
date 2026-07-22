@@ -16,16 +16,16 @@ const FormSubmitButton = ({ lable, submitting, onPress }) => {
 
 const styles = StyleSheet.create({
     container: {
-        height: 50,
-        borderRadius: 14,
+        height: 55,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: 12,
         shadowColor: '#5b6cff',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.22,
-        shadowRadius: 8,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.35,
+        shadowRadius: 10,
+        elevation: 6,
     },
     text: {
         fontSize: 16,

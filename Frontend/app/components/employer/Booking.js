@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, Text, FlatList, Alert, StyleSheet } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import Client from "../../api/Client";
 import { useLogin } from "../../context/LoginProvider";
 
@@ -7,9 +8,11 @@ const Booking = () => {
   const { profile } = useLogin();
   const [bookings, setBookings] = useState([]);
 
-  useEffect(() => {
-    loadBookings();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadBookings();
+    }, [])
+  );
 
   const loadBookings = async () => {
     try {
@@ -17,16 +20,6 @@ const Booking = () => {
       setBookings(res.data);
     } catch (err) {
       Alert.alert("Error", "Could not load bookings");
-    }
-  };
-
-  const updateStatus = async (id, status) => {
-    try {
-      await Client.put(`/bookings/${id}/status`, { status });
-      Alert.alert("Success", "Status updated");
-      loadBookings();
-    } catch (err) {
-      Alert.alert("Error", "Could not update booking");
     }
   };
 
@@ -42,18 +35,9 @@ const Booking = () => {
             <Text>Description: {item.description}</Text>
             <Text>Employee: {item.employee?.name || "N/A"}</Text>
             <Text>Work Type: {item.worktype?.name || "N/A"}</Text>
-            <Text>Price: {item.price}</Text>
+            <Text>Price: LKR {Number(item.price).toFixed(2)} {item.isOffer ? "(Offer)" : ""}</Text>
+            {item.isOffer && <Text style={{ fontStyle: 'italic', color: '#64748b' }}>Note: {item.offerDetails}</Text>}
             <Text>Status: {item.status}</Text>
-            {item.status === "Pending" && (
-              <View style={styles.row}>
-                <TouchableOpacity style={styles.accept} onPress={() => updateStatus(item.id, "Approved")}>
-                  <Text style={styles.btnText}>Approve</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.reject} onPress={() => updateStatus(item.id, "Rejected")}>
-                  <Text style={styles.btnText}>Reject</Text>
-                </TouchableOpacity>
-              </View>
-            )}
           </View>
         )}
       />
